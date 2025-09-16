@@ -6,9 +6,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // 运行时用“Transaction pooler（Shared Pooler）”
+  url       = env("DATABASE_URL")
+  // 迁移用“Direct connection”
+  directUrl = env("DIRECT_URL")
 }
+
 
 model User {
   id            String   @id @default(cuid())
