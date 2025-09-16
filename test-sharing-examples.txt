@@ -1,0 +1,20 @@
+# 测试用分享文案示例
+
+## 抖音
+7.43 复制打开抖音，看看【用户名】的作品 https://v.douyin.com/ieFsj2Rf/
+
+## B站
+【视频标题】 https://b23.tv/BV1234567890
+
+## YouTube
+Check out this video: https://youtu.be/dQw4w9WgXcQ
+
+## 直接链接
+https://www.bilibili.com/video/BV1234567890
+
+## 含标点符号
+看这个视频！https://v.douyin.com/abc123！！！
+
+## 无效示例（应该失败）
+这是一段没有链接的文字
+不支持的平台: https://example.com/video

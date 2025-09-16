@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  email         String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  subscription  Subscription?
+  usage         Usage?
+  parses        ParseRecord[]
+  auditLogs     AuditLog[]
+  
+  @@map("users")
+}
+
+model Subscription {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  plan             String    // FREE, PRO
+  status           String    // active, past_due, canceled, trialing
+  currentPeriodEnd DateTime?
+  currentPeriodStart DateTime?
+  stripeCustomerId String?
+  stripeSubId      String?
+  priceId          String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("subscriptions")
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  month     String   // YYYY-MM format
+  parses    Int      @default(0)
+  downloads Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, month])
+  @@map("usage")
+}
+
+model ParseRecord {
+  id           String   @id @default(cuid())
+  userId       String
+  platform     String   // tiktok, youtube, bilibili, etc.
+  inputUrl     String
+  title        String?
+  author       String?
+  thumbnail    String?
+  duration     Int?     // duration in seconds
+  license      String?  // permitted, unknown, prohibited
+  downloadable Boolean  @default(false)
+  embedHtml    String?  // for platforms that allow embedding
+  metadata     String?  // JSON string from the platform
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("parse_records")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String   // parse, download, upload
+  platform  String?
+  url       String?
+  success   Boolean
+  details   String?  // JSON string with extra context
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
