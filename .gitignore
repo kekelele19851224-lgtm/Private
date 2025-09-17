@@ -37,8 +37,7 @@ yarn-error.log*
 next-env.d.ts
 
 # prisma
-/prisma/migrations/*
-!/prisma/migrations/.gitkeep
+prisma/dev.db
 
 # IDE
 .vscode/
