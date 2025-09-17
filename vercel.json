@@ -1,4 +1,6 @@
 {
+  "buildCommand": "next build",
+  "installCommand": "npm install",
   "functions": {
     "app/api/stripe/webhook/route.ts": {
       "maxDuration": 30
