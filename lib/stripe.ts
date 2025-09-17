@@ -1,14 +1,14 @@
 import Stripe from 'stripe'
 import { env } from './env'
 
-export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
   typescript: true,
 })
 
 export const STRIPE_PLANS = {
   PRO: {
-    priceId: 'price_pro_monthly', // Replace with your actual Stripe price ID
+    priceId: process.env.STRIPE_PRICE_ID!,
     name: 'Pro Plan',
     price: 9.99,
     interval: 'month',
@@ -39,18 +39,20 @@ export async function createCheckoutSession(
   successUrl: string,
   cancelUrl: string
 ): Promise<Stripe.Checkout.Session> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL!
+  
   return await stripe.checkout.sessions.create({
     customer: customerId,
     payment_method_types: ['card'],
     line_items: [
       {
-        price: priceId,
+        price: process.env.STRIPE_PRICE_ID!,
         quantity: 1,
       },
     ],
     mode: 'subscription',
-    success_url: successUrl,
-    cancel_url: cancelUrl,
+    success_url: `${baseUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/pricing`,
     allow_promotion_codes: true,
   })
 }

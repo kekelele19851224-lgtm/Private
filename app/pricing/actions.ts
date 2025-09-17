@@ -19,12 +19,12 @@ export async function createCheckoutSession() {
   }
   if (!price) throw new Error("Missing STRIPE_PRICE_ID / STRIPE_PRICE_LOOKUP_KEY");
 
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
-    line_items: [{ price, quantity: 1 }],
-    success_url: `${base}/dashboard?checkout=success`,
-    cancel_url: `${base}/pricing?checkout=cancel`,
+    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+    success_url: `${baseUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/pricing`,
     client_reference_id: userId,
     metadata: { clerkUserId: userId },
     allow_promotion_codes: true

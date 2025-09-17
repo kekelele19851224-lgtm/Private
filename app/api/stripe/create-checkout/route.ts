@@ -5,6 +5,8 @@ import { PrismaClient } from '@prisma/client'
 import { createCheckoutSession, createStripeCustomer, STRIPE_PLANS } from '@/lib/stripe'
 import { env } from '@/lib/env'
 
+export const runtime = 'nodejs'
+
 const prisma = new PrismaClient()
 
 const checkoutRequestSchema = z.object({
@@ -78,13 +80,12 @@ export async function POST(request: NextRequest) {
 
     // Create checkout session
     const planConfig = STRIPE_PLANS[plan]
-    const baseUrl = env.NEXT_PUBLIC_APP_URL
 
     const session = await createCheckoutSession(
       stripeCustomerId,
       planConfig.priceId,
-      successUrl || `${baseUrl}/dashboard?checkout=success`,
-      cancelUrl || `${baseUrl}/pricing?checkout=canceled`
+      '', // URLs are now set in the function
+      '' // URLs are now set in the function
     )
 
     return NextResponse.json({
