@@ -120,7 +120,7 @@ export async function getUserStats(userId: string): Promise<{
   })
   
   // Get recent parse activity
-  const recentActivity = await prisma.parseRecord.findMany({
+  const recentActivityRaw = await prisma.parseRecord.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
     take: 10,
@@ -131,6 +131,11 @@ export async function getUserStats(userId: string): Promise<{
       createdAt: true,
     },
   })
+  
+  const recentActivity = recentActivityRaw.map(record => ({
+    ...record,
+    title: record.title || undefined,
+  }))
   
   // Get first parse date
   const firstParse = await prisma.parseRecord.findFirst({

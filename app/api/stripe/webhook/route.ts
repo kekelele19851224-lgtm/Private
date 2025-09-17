@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2023-10-16" });
 
 function mapStatus(s: string) {
   // 简化映射

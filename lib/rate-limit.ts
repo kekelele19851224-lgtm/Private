@@ -69,20 +69,21 @@ export async function checkRateLimit(
   try {
     // Check user-specific limit first
     let userLimit = null
+    let userResult = null
     if (type === 'parse') {
-      userLimit = userPlan === 'PRO' ? limits.pro : limits.free
+      userLimit = userPlan === 'PRO' ? limits.pro : ('free' in limits ? limits.free : null)
     } else if (type === 'download') {
       userLimit = userPlan === 'PRO' ? limits.pro : null // Free users can't download
     }
     
     if (userLimit) {
-      const userResult = await userLimit.limit(identifier)
+      userResult = await userLimit.limit(identifier)
       if (!userResult.success) {
         return {
           success: false,
           limit: userResult.limit,
           remaining: userResult.remaining,
-          reset: userResult.reset,
+          reset: new Date(userResult.reset),
         }
       }
     }
@@ -95,7 +96,7 @@ export async function checkRateLimit(
           success: false,
           limit: globalResult.limit,
           remaining: globalResult.remaining,
-          reset: globalResult.reset,
+          reset: new Date(globalResult.reset),
         }
       }
     }
@@ -103,9 +104,9 @@ export async function checkRateLimit(
     // If we get here, all checks passed
     return {
       success: true,
-      limit: userLimit?.limit || 1000,
-      remaining: userLimit?.remaining || 999,
-      reset: userLimit?.reset || new Date(Date.now() + 24 * 60 * 60 * 1000),
+      limit: userResult?.limit || 1000,
+      remaining: userResult?.remaining || 999,
+      reset: userResult?.reset ? new Date(userResult.reset) : new Date(Date.now() + 24 * 60 * 60 * 1000),
     }
     
   } catch (error) {

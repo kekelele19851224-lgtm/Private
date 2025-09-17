@@ -7,7 +7,7 @@ export async function createCheckoutSession() {
   const { userId } = auth();
   if (!userId) redirect("/sign-in?redirect_url=/pricing");
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2023-10-16" });
 
   // 兼容 priceId 或 lookupKey
   const priceId = process.env.STRIPE_PRICE_ID;

@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         title: meta?.title,
         author: meta?.author,
-        license: null,
+        license: undefined,
       },
       userDeclaration,
       userSubscription: userPlan,

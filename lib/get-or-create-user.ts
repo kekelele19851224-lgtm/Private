@@ -19,11 +19,11 @@ export async function getOrCreateUser() {
   const clerk = await clerkClient.users.getUser(userId);
   const email =
     clerk.emailAddresses?.[0]?.emailAddress ??
-    clerk.primaryEmailAddress?.emailAddress ??
     "";
 
   user = await prisma.user.create({
-    data: { clerkId: userId, email }
+    data: { clerkId: userId, email },
+    include: { subscription: true }
   });
 
   await prisma.usage.create({

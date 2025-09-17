@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { type, data } = event
+    const { type, data } = event as { type: string; data: any }
 
     switch (type) {
       case 'user.created':
